@@ -4,7 +4,9 @@ package com.canlioya.technicaltest.data
 import com.canlioya.technicaltest.data.network.AlbumDTO
 import com.canlioya.technicaltest.data.network.IApiProvider
 import com.canlioya.technicaltest.data.network.UserDTO
+import com.canlioya.technicaltest.data.network.toDomainModel
 import com.canlioya.technicaltest.model.Album
+import com.canlioya.technicaltest.model.Photo
 import com.canlioya.technicaltest.model.Result
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -81,6 +83,39 @@ class Repository @Inject constructor(private val albumApiProvider : IApiProvider
         return albumList.map {
             val userName = userMap[it.userId]
             Album(it.albumId, it.albumTitle, userName)
+        }
+    }
+
+    /**
+     * Attempts to fetch photos for each albums
+     * from the backend by albumId.
+     * It wraps the state in a flow of [Result].
+     * Emits Result.Loading state in the beginning.
+     * If an exception occurs during fetching, emits
+     * Result.Error. If data is successfully fetched,
+     * it wraps the data inside Result.Success.
+     * PhotoDTOs are mapped to Photo domain models
+     * before being sent to UI
+     * @param albumId
+     */
+    override suspend fun getPhotosForAlbum(albumId: Int) = flow {
+        emit((Result.Loading))
+        try {
+            val photoList = albumApiProvider.retrofitService.getPhotosForAlbum(albumId)
+            if(photoList?.isNotEmpty() == true){
+                val mappedList = photoList.map {
+                    it.toDomainModel()
+                }
+                emit(Result.Success(mappedList))
+            } else {
+                emit(Result.Success(emptyList<Photo>()))
+            }
+        } catch (e: HttpException) {
+            Timber.e(e)
+            emit(Result.Error(e))
+        } catch (e: IOException) {
+            Timber.e(e)
+            emit(Result.Error(e))
         }
     }
 }

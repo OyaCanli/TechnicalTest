@@ -1,4 +1,4 @@
-package com.canlioya.technicaltest.ui.albums
+package com.canlioya.technicaltest.ui.base
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

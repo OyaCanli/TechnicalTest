@@ -1,6 +1,7 @@
 package com.canlioya.technicaltest.data
 
 import com.canlioya.technicaltest.model.Album
+import com.canlioya.technicaltest.model.Photo
 import com.canlioya.technicaltest.model.Result
 import kotlinx.coroutines.flow.Flow
 
@@ -13,5 +14,7 @@ import kotlinx.coroutines.flow.Flow
 interface IRepository {
 
     suspend fun getAllAlbums(): Flow<Result<List<Album>?>>
+
+    suspend fun getPhotosForAlbum(albumId : Int): Flow<Result<List<Photo>?>>
 
 }

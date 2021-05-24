@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.canlioya.technicaltest.R
 import com.canlioya.technicaltest.model.Album
+import com.canlioya.technicaltest.ui.base.ItemViewHolder
 
 
 class AlbumListAdapter(private val clickListener : AlbumClickListener) : ListAdapter<Album, ItemViewHolder<Album>>(DiffCallback()) {

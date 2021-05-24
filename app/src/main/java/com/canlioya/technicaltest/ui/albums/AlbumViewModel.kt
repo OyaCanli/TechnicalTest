@@ -7,6 +7,7 @@ import com.canlioya.technicaltest.data.IRepository
 import com.canlioya.technicaltest.model.Album
 import com.canlioya.technicaltest.model.Result
 import com.canlioya.technicaltest.model.UIState
+import com.canlioya.technicaltest.ui.base.BaseViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -14,17 +15,7 @@ import kotlinx.coroutines.launch
 class AlbumViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
     private val repository: IRepository
-) : ViewModel() {
-
-    private val _uiState: MutableLiveData<UIState> = MutableLiveData()
-
-    /**
-     * Backed by private MutableLiveData _uiState of type
-     * {@link com.canlioya.technicaltest.model.UIState}
-     * and exposed as immutable LiveData
-     */
-    val uiState: LiveData<UIState>
-        get() = _uiState
+) : BaseViewModel() {
 
     private val _albums = MutableLiveData<List<Album>>()
     val albums: LiveData<List<Album>>
@@ -40,7 +31,7 @@ class AlbumViewModel @ViewModelInject constructor(
      * Results are wrapped in {@link com.canlioya.technicaltest.model.Result}
      * sealed class. UIState is u
      */
-    fun startFetching() {
+    override fun startFetching() {
         viewModelScope.launch {
             repository.getAllAlbums().collect { result ->
                 when (result) {

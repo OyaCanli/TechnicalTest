@@ -37,6 +37,13 @@ interface AlbumApiService {
      */
     @GET("users")
     suspend fun getUserWithId(@Query("id") userId : Int) : List<UserDTO>?
+
+    /**
+     * Returns a Retrofit callback that delivers the list of photos with the specified albumId
+     * @param albumId
+     */
+    @GET("photos")
+    suspend fun getPhotosForAlbum(@Query("albumId") albumId: Int): List<PhotoDTO>?
 }
 
 /**

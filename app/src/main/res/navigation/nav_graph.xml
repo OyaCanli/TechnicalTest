@@ -8,6 +8,17 @@
         android:id="@+id/albumListFragment"
         android:name="com.canlioya.technicaltest.ui.albums.AlbumListFragment"
         android:label="Albums" >
+        <action
+            android:id="@+id/action_albumListFragment_to_photoListFragment"
+            app:destination="@id/photoListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/photoListFragment"
+        android:name="com.canlioya.technicaltest.ui.photos.PhotoListFragment"
+        android:label="Photos" >
+        <argument
+            android:name="chosenAlbum"
+            app:argType="com.canlioya.technicaltest.model.Album" />
     </fragment>
 
 </navigation>
