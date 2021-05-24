@@ -36,6 +36,7 @@ abstract class BaseFragment : Fragment(R.layout.fragment_list) {
      */
     protected val binding by viewBinding(FragmentListBinding::bind)
 
+    private var networkReceiver: NetworkReceiver? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,6 +56,7 @@ abstract class BaseFragment : Fragment(R.layout.fragment_list) {
                     length = Snackbar.LENGTH_INDEFINITE,
                     backgroundColor = R.color.dark_red
                 )
+                startListeningNetworkState()
             }
         })
     }
@@ -65,6 +67,76 @@ abstract class BaseFragment : Fragment(R.layout.fragment_list) {
      * @return BaseViewModel
      */
     abstract fun getViewModel() : BaseViewModel
+
+    /**
+     * When fetching failed with a network error, we start listening for
+     * network state by registering a broadcast receiver for CONNECTIVITY_CHANGE
+     */
+    private fun startListeningNetworkState() {
+        Timber.d("Start listening network state")
+        if (networkReceiver == null) {
+            networkReceiver = NetworkReceiver()
+        }
+        val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
+        context?.registerReceiver(networkReceiver, intentFilter)
+    }
+
+    /**
+     * When connection is reestablished or the user quits the app
+     * we unregister from the broadcast receiver
+     */
+    private fun stopListeningNetworkState() {
+        Timber.d("Stop listening network state")
+        networkReceiver?.let {
+            context?.unregisterReceiver(it)
+            networkReceiver = null
+        }
+    }
+
+    /**
+     * Broadcast receiver for listening to network state.
+     * When triggered, we check if network is available
+     * and if available we start fetching again, we show
+     * a snack for informing the user and we unregister
+     * from the broadcast receiver
+     */
+    inner class NetworkReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            Timber.d("Broadcast received for network state")
+            if (isOnline(context)) {
+                Timber.d("is online")
+                getViewModel().startFetching()
+                stopListeningNetworkState()
+                binding.root.showSnack(
+                    text = R.string.internet_is_back,
+                    backgroundColor = R.color.light_blue
+                )
+            }
+        }
+    }
+
+    /**
+     * If user quits the app while broadcast receiver is active,
+     * we unregister not to waste system resources
+     */
+    override fun onStop() {
+        super.onStop()
+        if (getViewModel().uiState.value == UIState.ERROR) {
+            stopListeningNetworkState()
+        }
+    }
+
+    /**
+     * If the app was in error state when user put the
+     * app in the background, when user comes back we
+     * continue listening for network state
+     */
+    override fun onStart() {
+        super.onStart()
+        if (getViewModel().uiState.value == UIState.ERROR) {
+            startListeningNetworkState()
+        }
+    }
 
 
 }
