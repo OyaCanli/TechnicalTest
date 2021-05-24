@@ -6,4 +6,6 @@
     <dimen name="padding_standard">16dp</dimen>
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_mini">4dp</dimen>
+
+    <dimen name="no_network_image_size">100dp</dimen>
 </resources>

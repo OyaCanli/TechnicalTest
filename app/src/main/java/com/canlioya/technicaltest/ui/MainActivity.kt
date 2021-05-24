@@ -1,12 +1,11 @@
-package com.canlioya.technicaltest
+package com.canlioya.technicaltest.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
+import com.canlioya.technicaltest.R
 import com.canlioya.technicaltest.data.IRepository
-import com.canlioya.technicaltest.data.Repository
 import com.canlioya.technicaltest.model.Result
-import com.canlioya.technicaltest.model.UIState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
