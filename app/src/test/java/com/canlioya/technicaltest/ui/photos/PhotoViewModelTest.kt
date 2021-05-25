@@ -2,6 +2,8 @@ package com.canlioya.technicaltest.ui.photos
 
 import androidx.lifecycle.SavedStateHandle
 import com.canlioya.technicaltest.data.*
+import com.canlioya.technicaltest.fakedata.FailFakeRepository
+import com.canlioya.technicaltest.fakedata.SuccessFakeRepository
 import com.canlioya.technicaltest.model.UIState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

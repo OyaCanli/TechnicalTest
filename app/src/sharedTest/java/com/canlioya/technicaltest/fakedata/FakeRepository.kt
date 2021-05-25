@@ -1,5 +1,8 @@
-package com.canlioya.technicaltest.data
+package com.canlioya.technicaltest.fakedata
 
+import com.canlioya.technicaltest.data.IRepository
+import com.canlioya.technicaltest.data.mappedAlbumList
+import com.canlioya.technicaltest.data.mappedPhotoList
 import com.canlioya.technicaltest.model.Result
 import kotlinx.coroutines.flow.flow
 import java.io.IOException

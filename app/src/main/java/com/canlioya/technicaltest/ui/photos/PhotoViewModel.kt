@@ -3,6 +3,7 @@ package com.canlioya.technicaltest.ui.photos
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.canlioya.technicaltest.common.NetworkIdlingResource
 import com.canlioya.technicaltest.data.IRepository
 import com.canlioya.technicaltest.di.IODispatcher
 import com.canlioya.technicaltest.model.Album
@@ -36,15 +37,20 @@ class PhotoViewModel @ViewModelInject constructor(
 
     override suspend fun startFetching() {
         album?.albumId?.let {
+            //NetworkIdlingResource.increment()
             repository.getPhotosForAlbum(it).collect { result ->
                 when (result) {
                     is Result.Loading -> _uiState.value = UIState.LOADING
-                    is Result.Error -> _uiState.value = UIState.ERROR
+                    is Result.Error -> {
+                        _uiState.value = UIState.ERROR
+                        NetworkIdlingResource.decrement()
+                    }
                     is Result.Success -> {
                         _uiState.value = UIState.SUCCESS
                         if (result.data?.isNotEmpty() == true) {
                             _photos.value = result.data
                         }
+                        //NetworkIdlingResource.decrement()
                     }
                 }
             }

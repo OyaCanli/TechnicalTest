@@ -1,7 +1,7 @@
 package com.canlioya.technicaltest.ui.albums
 
-import com.canlioya.technicaltest.data.FailFakeRepository
-import com.canlioya.technicaltest.data.SuccessFakeRepository
+import com.canlioya.technicaltest.fakedata.FailFakeRepository
+import com.canlioya.technicaltest.fakedata.SuccessFakeRepository
 import com.canlioya.technicaltest.data.mappedAlbumList
 import com.canlioya.technicaltest.model.UIState
 import kotlinx.coroutines.ExperimentalCoroutinesApi

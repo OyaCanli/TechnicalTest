@@ -26,6 +26,7 @@
             tools:listitem="@layout/item_album" />
 
         <ImageView
+            android:id="@+id/error_image"
             android:layout_width="@dimen/no_network_image_size"
             android:layout_height="@dimen/no_network_image_size"
             android:layout_gravity="center"
