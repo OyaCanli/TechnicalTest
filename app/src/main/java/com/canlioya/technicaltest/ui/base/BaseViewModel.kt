@@ -28,5 +28,5 @@ abstract class BaseViewModel : ViewModel() {
      * abstract method to be overridden by inheritors
      * for starting fetching from the internet
      */
-    abstract fun startFetching()
+    abstract suspend fun startFetching()
 }

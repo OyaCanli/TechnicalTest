@@ -115,8 +115,12 @@ abstract class BaseFragment : Fragment(R.layout.fragment_list) {
             Timber.d("Broadcast received for network state")
             if (isOnline(context)) {
                 Timber.d("is online")
-                getViewModel().startFetching()
                 stopListeningNetworkState()
+                viewLifecycleOwner.lifecycleScope.launch {
+                    lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        getViewModel().startFetching()
+                    }
+                }
                 binding.root.showSnack(
                     text = R.string.internet_is_back,
                     backgroundColor = R.color.light_blue

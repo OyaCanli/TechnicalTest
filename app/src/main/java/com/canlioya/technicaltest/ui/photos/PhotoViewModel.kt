@@ -22,29 +22,28 @@ class PhotoViewModel @ViewModelInject constructor(
     @IODispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel() {
 
-
     private val _photos = MutableStateFlow<List<Photo>>(emptyList())
     val photos: StateFlow<List<Photo>>
         get() = _photos
 
-    val album = savedStateHandle.get<Album>("chosenAlbum")
+    private val album = savedStateHandle.get<Album>("chosenAlbum")
 
     init {
-        startFetching()
+        viewModelScope.launch(dispatcher) {
+            startFetching()
+        }
     }
 
-    override fun startFetching() {
-        viewModelScope.launch(dispatcher) {
-            album?.albumId?.let {
-                repository.getPhotosForAlbum(it).collect { result ->
-                    when (result) {
-                        is Result.Loading -> _uiState.value = UIState.LOADING
-                        is Result.Error -> _uiState.value = UIState.ERROR
-                        is Result.Success -> {
-                            _uiState.value =UIState.SUCCESS
-                            if (result.data?.isNotEmpty() == true) {
-                                _photos.value = result.data
-                            }
+    override suspend fun startFetching() {
+        album?.albumId?.let {
+            repository.getPhotosForAlbum(it).collect { result ->
+                when (result) {
+                    is Result.Loading -> _uiState.value = UIState.LOADING
+                    is Result.Error -> _uiState.value = UIState.ERROR
+                    is Result.Success -> {
+                        _uiState.value = UIState.SUCCESS
+                        if (result.data?.isNotEmpty() == true) {
+                            _photos.value = result.data
                         }
                     }
                 }

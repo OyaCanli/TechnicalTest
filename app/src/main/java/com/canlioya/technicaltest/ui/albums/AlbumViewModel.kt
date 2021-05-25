@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 
 
 class AlbumViewModel @ViewModelInject constructor(
-    @Assisted private val savedStateHandle: SavedStateHandle,
     private val repository: IRepository,
     @IODispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel() {
@@ -27,7 +26,9 @@ class AlbumViewModel @ViewModelInject constructor(
         get() = _albums
 
     init {
-        startFetching()
+        viewModelScope.launch(dispatcher) {
+            startFetching()
+        }
     }
 
     /**
@@ -36,16 +37,14 @@ class AlbumViewModel @ViewModelInject constructor(
      * Results are wrapped in {@link com.canlioya.technicaltest.model.Result}
      * sealed class. UIState is u
      */
-    override fun startFetching() {
-        viewModelScope.launch(dispatcher) {
-            repository.getAllAlbums().collect { result ->
-                when (result) {
-                    is Result.Loading -> _uiState.value = UIState.LOADING
-                    is Result.Error -> _uiState.value = UIState.ERROR
-                    is Result.Success -> {
-                        _uiState.value = UIState.SUCCESS
-                        processData(result.data)
-                    }
+    override suspend fun startFetching() {
+        repository.getAllAlbums().collect { result ->
+            when (result) {
+                is Result.Loading -> _uiState.value = UIState.LOADING
+                is Result.Error -> _uiState.value = UIState.ERROR
+                is Result.Success -> {
+                    _uiState.value = UIState.SUCCESS
+                    processData(result.data)
                 }
             }
         }
