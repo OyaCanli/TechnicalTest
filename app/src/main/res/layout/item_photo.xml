@@ -18,7 +18,7 @@
             android:layout_width="@dimen/item_photo_dim"
             android:layout_height="@dimen/item_photo_dim"
             app:imageUrl="@{item.url}"
-            android:contentDescription="@{item.photoTitle}"
+            android:contentDescription="@{String.format(@string/cd_item_photo ,item.photoTitle)}"
             tools:srcCompat="@tools:sample/avatars"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"

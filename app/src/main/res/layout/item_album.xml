@@ -7,7 +7,6 @@
         <variable
             name="item"
             type="com.canlioya.technicaltest.model.Album" />
-        <import type="com.canlioya.technicaltest.common.BindingUtils"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,7 +29,7 @@
             android:id="@+id/item_album_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{BindingUtils.addBy(item.userFullName)}"
+            android:text="@{String.format(@string/by_author, item.userFullName)}"
             tools:text="Author name"
             android:textStyle="italic"
             android:textColor="@color/dark_blue"
