@@ -1,10 +1,7 @@
 package com.canlioya.technicaltest.data
 
 
-import com.canlioya.technicaltest.data.network.AlbumDTO
-import com.canlioya.technicaltest.data.network.IApiProvider
-import com.canlioya.technicaltest.data.network.UserDTO
-import com.canlioya.technicaltest.data.network.toDomainModel
+import com.canlioya.technicaltest.data.network.*
 import com.canlioya.technicaltest.model.Album
 import com.canlioya.technicaltest.model.Photo
 import com.canlioya.technicaltest.model.Result
@@ -23,7 +20,7 @@ import javax.inject.Singleton
  * as singleton by dependency injection
  */
 @Singleton
-class Repository @Inject constructor(private val albumApiProvider : IApiProvider) : IRepository {
+class Repository @Inject constructor(private val retrofitService : AlbumApiService) : IRepository {
 
     /**
      * <p>Attempts to fetch albums from the backend
@@ -37,7 +34,7 @@ class Repository @Inject constructor(private val albumApiProvider : IApiProvider
     override suspend fun getAllAlbums() = flow {
         emit((Result.Loading))
         try {
-            val albumList = albumApiProvider.retrofitService.getAlbums()
+            val albumList = retrofitService.getAlbums()
 
             if(albumList?.isNotEmpty() == true){
                 val mappedList = fetchUsersAndMapToAlbums(albumList)
@@ -73,7 +70,7 @@ class Repository @Inject constructor(private val albumApiProvider : IApiProvider
             if (userMap[album.userId] == null) {
                 Timber.d("fetching user for userID : ${album.userId}")
                 val user: UserDTO? =
-                    albumApiProvider.retrofitService.getUserWithId(album.userId)?.get(0)
+                    retrofitService.getUserWithId(album.userId)?.get(0)
                 user?.fullName?.let {
                     userMap[album.userId] = it
                 }
@@ -101,7 +98,7 @@ class Repository @Inject constructor(private val albumApiProvider : IApiProvider
     override suspend fun getPhotosForAlbum(albumId: Int) = flow {
         emit((Result.Loading))
         try {
-            val photoList = albumApiProvider.retrofitService.getPhotosForAlbum(albumId)
+            val photoList = retrofitService.getPhotosForAlbum(albumId)
             if(photoList?.isNotEmpty() == true){
                 val mappedList = photoList.map {
                     it.toDomainModel()

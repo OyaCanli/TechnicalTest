@@ -4,11 +4,13 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.canlioya.technicaltest.data.IRepository
+import com.canlioya.technicaltest.di.IODispatcher
 import com.canlioya.technicaltest.model.Album
 import com.canlioya.technicaltest.model.Photo
 import com.canlioya.technicaltest.model.Result
 import com.canlioya.technicaltest.ui.base.BaseViewModel
 import com.canlioya.technicaltest.model.UIState
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -16,7 +18,8 @@ import kotlinx.coroutines.launch
 
 class PhotoViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
-    private val repository: IRepository
+    private val repository: IRepository,
+    @IODispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel() {
 
 
@@ -31,7 +34,7 @@ class PhotoViewModel @ViewModelInject constructor(
     }
 
     override fun startFetching() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher) {
             album?.albumId?.let {
                 repository.getPhotosForAlbum(it).collect { result ->
                     when (result) {

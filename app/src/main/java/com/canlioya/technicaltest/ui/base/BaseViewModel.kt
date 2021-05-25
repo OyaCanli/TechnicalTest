@@ -1,7 +1,5 @@
 package com.canlioya.technicaltest.ui.base
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.canlioya.technicaltest.model.UIState
 import kotlinx.coroutines.flow.MutableStateFlow

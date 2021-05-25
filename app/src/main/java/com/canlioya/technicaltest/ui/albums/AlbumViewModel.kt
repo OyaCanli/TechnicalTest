@@ -4,10 +4,12 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.canlioya.technicaltest.data.IRepository
+import com.canlioya.technicaltest.di.IODispatcher
 import com.canlioya.technicaltest.model.Album
 import com.canlioya.technicaltest.model.Result
 import com.canlioya.technicaltest.model.UIState
 import com.canlioya.technicaltest.ui.base.BaseViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -16,7 +18,8 @@ import kotlinx.coroutines.launch
 
 class AlbumViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
-    private val repository: IRepository
+    private val repository: IRepository,
+    @IODispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel() {
 
     private val _albums = MutableStateFlow<List<Album>>(emptyList())
@@ -34,7 +37,7 @@ class AlbumViewModel @ViewModelInject constructor(
      * sealed class. UIState is u
      */
     override fun startFetching() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher) {
             repository.getAllAlbums().collect { result ->
                 when (result) {
                     is Result.Loading -> _uiState.value = UIState.LOADING

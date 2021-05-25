@@ -29,3 +29,14 @@ data class PhotoDTO(
  */
 fun PhotoDTO.toDomainModel() = Photo(this.photoTitle, this.url,this.thumbnailUrl)
 
+/**
+ * Extension function for mapping a list of PhotoDTOs
+ * to a list of Photo domain models
+ *
+ * @return
+ */
+fun List<PhotoDTO>.toDomainModelList() : List<Photo> {
+    return this.map {
+        it.toDomainModel()
+    }
+}
