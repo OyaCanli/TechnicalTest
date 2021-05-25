@@ -1,9 +1,7 @@
 package com.canlioya.technicaltest.ui.albums
 
-import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.*
-import com.canlioya.technicaltest.common.NetworkIdlingResource
+import androidx.lifecycle.viewModelScope
 import com.canlioya.technicaltest.data.IRepository
 import com.canlioya.technicaltest.di.IODispatcher
 import com.canlioya.technicaltest.model.Album
@@ -39,18 +37,15 @@ class AlbumViewModel @ViewModelInject constructor(
      * sealed class. UIState is u
      */
     override suspend fun startFetching() {
-        NetworkIdlingResource.increment()
         repository.getAllAlbums().collect { result ->
             when (result) {
                 is Result.Loading -> _uiState.value = UIState.LOADING
                 is Result.Error -> {
                     _uiState.value = UIState.ERROR
-                    NetworkIdlingResource.decrement()
                 }
                 is Result.Success -> {
                     _uiState.value = UIState.SUCCESS
                     processData(result.data)
-                    NetworkIdlingResource.decrement()
                 }
             }
         }
