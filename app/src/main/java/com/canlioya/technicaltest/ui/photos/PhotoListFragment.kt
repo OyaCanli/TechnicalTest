@@ -8,6 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import com.canlioya.technicaltest.R
 import com.canlioya.technicaltest.model.Album
 import com.canlioya.technicaltest.ui.base.BaseFragment
 import com.canlioya.technicaltest.ui.base.BaseViewModel
@@ -50,8 +51,10 @@ class PhotoListFragment : BaseFragment() {
     private fun setRecyclerView(): PhotoAdapter {
         val adapter = PhotoAdapter()
 
+        val spanCount = context?.resources?.getInteger(R.integer.column_count) ?: 3
+
         binding.list.apply {
-            layoutManager = GridLayoutManager(context, 3) //todo: span count
+            layoutManager = GridLayoutManager(context, spanCount)
             this.adapter = adapter
         }
         return adapter
