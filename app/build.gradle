@@ -49,11 +49,17 @@ android {
 }
 
 tasks.dokkaHtml.configure {
-    outputDirectory.set(file("../documentation/html"))
+    outputDirectory.set(file("../docs/html"))
 }
 
 tasks.dokkaJavadoc.configure {
-    outputDirectory.set(file("../documentation/javadoc"))
+    outputDirectory.set(file("../docs/javadoc"))
+}
+
+tasks.withType(dokkaHtml.getClass()).configureEach {
+    pluginsMapConfiguration.set(
+            ["org.jetbrains.dokka.base.Dokkabase": """{ "separateInheritedMembers": true}"""]
+    )
 }
 
 dependencies {
