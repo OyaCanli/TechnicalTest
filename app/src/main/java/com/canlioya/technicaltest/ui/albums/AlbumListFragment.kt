@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +20,8 @@ import com.canlioya.technicaltest.ui.base.BaseFragment
 import com.canlioya.technicaltest.ui.base.BaseViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -40,24 +45,16 @@ class AlbumListFragment : BaseFragment(), AlbumClickListener {
             binding.executePendingBindings()
         }
 
-        viewModel.uiState.observe(viewLifecycleOwner, {
-            /*When there is a network error, it shows no network screen
-            and start to listen to network state by registering a broadcast listener*/
-            if (it == UIState.ERROR) {
-                binding.root.showSnack(
-                    text = R.string.no_internet_warning,
-                    length = Snackbar.LENGTH_INDEFINITE,
-                    backgroundColor = R.color.dark_red
-                )
-            }
-        })
-
         //Claim and observe albums from the viewmodel
-        viewModel.albums.observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                adapter.submitList(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.albums.collectLatest {
+                    if (it.isNotEmpty()) {
+                        adapter.submitList(it)
+                    }
+                }
             }
-        })
+        }
     }
 
     override fun getViewModel(): BaseViewModel = viewModel

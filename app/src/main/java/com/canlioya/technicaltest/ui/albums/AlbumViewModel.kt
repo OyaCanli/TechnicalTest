@@ -8,6 +8,8 @@ import com.canlioya.technicaltest.model.Album
 import com.canlioya.technicaltest.model.Result
 import com.canlioya.technicaltest.model.UIState
 import com.canlioya.technicaltest.ui.base.BaseViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -17,8 +19,8 @@ class AlbumViewModel @ViewModelInject constructor(
     private val repository: IRepository
 ) : BaseViewModel() {
 
-    private val _albums = MutableLiveData<List<Album>>()
-    val albums: LiveData<List<Album>>
+    private val _albums = MutableStateFlow<List<Album>>(emptyList())
+    val albums: StateFlow<List<Album>>
         get() = _albums
 
     init {
@@ -35,10 +37,10 @@ class AlbumViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             repository.getAllAlbums().collect { result ->
                 when (result) {
-                    is Result.Loading -> _uiState.postValue(UIState.LOADING)
-                    is Result.Error -> _uiState.postValue(UIState.ERROR)
+                    is Result.Loading -> _uiState.value = UIState.LOADING
+                    is Result.Error -> _uiState.value = UIState.ERROR
                     is Result.Success -> {
-                        _uiState.postValue(UIState.SUCCESS)
+                        _uiState.value = UIState.SUCCESS
                         processData(result.data)
                     }
                 }
@@ -55,9 +57,7 @@ class AlbumViewModel @ViewModelInject constructor(
             val sortedList = data.sortedBy {
                 it.albumTitle
             }
-            _albums.postValue(sortedList)
-        } else {
-            _albums.postValue(emptyList())
+            _albums.value = sortedList
         }
     }
 }

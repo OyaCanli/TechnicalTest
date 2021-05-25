@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.canlioya.technicaltest.model.UIState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Base viewmodel class to be extended by
@@ -14,14 +16,14 @@ import com.canlioya.technicaltest.model.UIState
  */
 abstract class BaseViewModel : ViewModel() {
 
-    protected val _uiState: MutableLiveData<UIState> = MutableLiveData()
+    protected val _uiState: MutableStateFlow<UIState> = MutableStateFlow(UIState.LOADING)
 
     /**
      * Backed by private MutableLiveData _uiState of type
      * {@link com.canlioya.technicaltest.model.UIState}
      * and exposed as immutable LiveData
      */
-    val uiState: LiveData<UIState>
+    val uiState: StateFlow<UIState>
         get() = _uiState
 
     /**

@@ -7,6 +7,9 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.canlioya.technicaltest.R
 import com.canlioya.technicaltest.common.isOnline
@@ -14,6 +17,8 @@ import com.canlioya.technicaltest.common.showSnack
 import com.canlioya.technicaltest.databinding.FragmentListBinding
 import com.canlioya.technicaltest.model.UIState
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
@@ -47,18 +52,23 @@ abstract class BaseFragment : Fragment(R.layout.fragment_list) {
             binding.executePendingBindings()
         }
 
-        getViewModel().uiState.observe(viewLifecycleOwner, {
-            /*When there is a network error, it shows no network screen
-            and start to listen to network state by registering a broadcast listener*/
-            if (it == UIState.ERROR) {
-                binding.root.showSnack(
-                    text = R.string.no_internet_warning,
-                    length = Snackbar.LENGTH_INDEFINITE,
-                    backgroundColor = R.color.dark_red
-                )
-                startListeningNetworkState()
+        viewLifecycleOwner.lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                getViewModel().uiState.collectLatest { state ->
+                    /*When there is a network error, it shows no network screen
+                and start to listen to network state by registering a broadcast listener*/
+                    if (state == UIState.ERROR) {
+                        binding.root.showSnack(
+                            text = R.string.no_internet_warning,
+                            length = Snackbar.LENGTH_INDEFINITE,
+                            backgroundColor = R.color.dark_red
+                        )
+                        startListeningNetworkState()
+                    }
+                }
             }
-        })
+        }
+
     }
 
     /**

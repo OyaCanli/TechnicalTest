@@ -5,10 +5,10 @@
 
     <data>
         <import type="com.canlioya.technicaltest.model.UIState"/>
-        <import type="androidx.lifecycle.LiveData"/>
+        <import type="kotlinx.coroutines.flow.StateFlow"/>
         <variable
             name="uiState"
-            type="LiveData&lt;UIState>" />
+            type="StateFlow&lt;UIState>" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

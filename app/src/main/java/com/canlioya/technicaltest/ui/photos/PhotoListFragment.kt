@@ -4,11 +4,16 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.canlioya.technicaltest.model.Album
 import com.canlioya.technicaltest.ui.base.BaseFragment
 import com.canlioya.technicaltest.ui.base.BaseViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -31,11 +36,15 @@ class PhotoListFragment : BaseFragment() {
 
         val adapter = setRecyclerView()
 
-        viewModel.photos.observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                adapter.submitList(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.photos.collectLatest {
+                    if (it.isNotEmpty()) {
+                        adapter.submitList(it)
+                    }
+                }
             }
-        })
+        }
     }
 
     private fun setRecyclerView(): PhotoAdapter {
