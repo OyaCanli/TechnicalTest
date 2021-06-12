@@ -43,6 +43,18 @@ import javax.inject.Singleton
 @HiltAndroidTest
 class SuccessCaseTests {
 
+    @Module
+    @InstallIn(ApplicationComponent::class)
+    object FakeSuccessfullNetworkModule {
+
+        @Singleton
+        @Provides
+        fun provideFakeSuccessfullService() : AlbumApiService = SuccessfullRetrofitService()
+
+        @Provides
+        fun provideIdlingResource() : NetworkIdlingResource = NetworkIdlingResource()
+    }
+
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
 
@@ -52,13 +64,11 @@ class SuccessCaseTests {
     @Before
     fun registerIdlingResource() {
         IdlingRegistry.getInstance().register(dataBindingIdlingResource)
-        //IdlingRegistry.getInstance().register(NetworkIdlingResource.countingIdlingResource)
     }
 
     @After
     fun unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
-        //IdlingRegistry.getInstance().unregister(NetworkIdlingResource.countingIdlingResource)
     }
 
     @Test
@@ -77,14 +87,5 @@ class SuccessCaseTests {
         onView(withId(R.id.list)).check(matches(isDisplayed()))
 
         activityScenario.close()
-    }
-
-    @Module
-    @InstallIn(ApplicationComponent::class)
-    object FakeSuccessfullNetworkModule {
-
-        @Singleton
-        @Provides
-        fun provideFakeSuccessfullService() : AlbumApiService = SuccessfullRetrofitService()
     }
 }

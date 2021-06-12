@@ -2,6 +2,7 @@ package com.canlioya.technicaltest.ui.albums
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
+import com.canlioya.technicaltest.common.NetworkIdlingResource
 import com.canlioya.technicaltest.data.IRepository
 import com.canlioya.technicaltest.di.IODispatcher
 import com.canlioya.technicaltest.model.Album
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 
 class AlbumViewModel @ViewModelInject constructor(
     private val repository: IRepository,
-    @IODispatcher private val dispatcher: CoroutineDispatcher
+    @IODispatcher private val dispatcher: CoroutineDispatcher,
+    private val networkIdlingResource : NetworkIdlingResource? = null
 ) : BaseViewModel() {
 
     private val _albums = MutableStateFlow<List<Album>>(emptyList())
@@ -37,15 +39,18 @@ class AlbumViewModel @ViewModelInject constructor(
      * sealed class. UIState is u
      */
     override suspend fun startFetching() {
+        networkIdlingResource?.increment()
         repository.getAllAlbums().collect { result ->
             when (result) {
                 is Result.Loading -> _uiState.value = UIState.LOADING
                 is Result.Error -> {
                     _uiState.value = UIState.ERROR
+                    networkIdlingResource?.decrement()
                 }
                 is Result.Success -> {
                     _uiState.value = UIState.SUCCESS
                     processData(result.data)
+                    networkIdlingResource?.decrement()
                 }
             }
         }

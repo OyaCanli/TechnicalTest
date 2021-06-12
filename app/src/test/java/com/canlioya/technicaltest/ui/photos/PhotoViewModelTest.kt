@@ -1,7 +1,8 @@
 package com.canlioya.technicaltest.ui.photos
 
 import androidx.lifecycle.SavedStateHandle
-import com.canlioya.technicaltest.data.*
+import com.canlioya.technicaltest.data.mappedPhotoList
+import com.canlioya.technicaltest.data.sampleAlbum1
 import com.canlioya.technicaltest.fakedata.FailFakeRepository
 import com.canlioya.technicaltest.fakedata.SuccessFakeRepository
 import com.canlioya.technicaltest.model.UIState

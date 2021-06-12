@@ -1,5 +1,6 @@
 package com.canlioya.technicaltest.di
 
+import com.canlioya.technicaltest.common.NetworkIdlingResource
 import com.canlioya.technicaltest.data.network.AlbumApiService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -30,4 +31,8 @@ object NetworkModule {
             .build()
         return retrofit.create(AlbumApiService::class.java)
     }
+
+    //This is only for instrumentation testing, it can be null on production code
+    @Provides
+    fun provideIdlingResource() : NetworkIdlingResource? = null
 }

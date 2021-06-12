@@ -1,8 +1,8 @@
 package com.canlioya.technicaltest.ui.albums
 
+import com.canlioya.technicaltest.data.mappedAlbumList
 import com.canlioya.technicaltest.fakedata.FailFakeRepository
 import com.canlioya.technicaltest.fakedata.SuccessFakeRepository
-import com.canlioya.technicaltest.data.mappedAlbumList
 import com.canlioya.technicaltest.model.UIState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -17,11 +17,11 @@ class AlbumViewModelTest {
 
     private var testDispatcher = TestCoroutineDispatcher()
 
-    fun setForSuccessfulResult() : AlbumViewModel{
+    private fun setForSuccessfulResult() : AlbumViewModel{
         return AlbumViewModel(SuccessFakeRepository(), testDispatcher)
     }
 
-    fun setForError() : AlbumViewModel{
+    private fun setForError() : AlbumViewModel{
         return AlbumViewModel(FailFakeRepository(), testDispatcher)
     }
 

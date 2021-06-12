@@ -4,7 +4,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.canlioya.technicaltest.R
-import com.canlioya.technicaltest.common.NetworkIdlingResource
 import com.canlioya.technicaltest.model.Album
 import com.canlioya.technicaltest.ui.base.ItemViewHolder
 
@@ -20,14 +19,6 @@ class AlbumListAdapter(private val clickListener : AlbumClickListener) : ListAda
         holder.binding.root.setOnClickListener {
             clickListener.onAlbumClicked(currentItem)
         }
-    }
-
-    override fun submitList(list: List<Album>?) {
-        NetworkIdlingResource.increment()
-        val commitCallback = Runnable {
-            NetworkIdlingResource.decrement()
-        }
-        super.submitList(list, commitCallback)
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Album>() {

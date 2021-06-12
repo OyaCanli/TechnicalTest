@@ -2,10 +2,12 @@ package com.canlioya.technicaltest.common
 
 import androidx.test.espresso.idling.CountingIdlingResource
 
-object NetworkIdlingResource {
+class NetworkIdlingResource {
 
-    val resource = "networkResource"
-    val countingIdlingResource = CountingIdlingResource(resource)
+    companion object {
+        val resource = "networkResource"
+        val countingIdlingResource = CountingIdlingResource(resource)
+    }
 
     fun increment(){
         countingIdlingResource.increment()
